@@ -35,29 +35,6 @@ const StudentDashboard = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [showResults, setShowResults] = useState(false);
 
-  useEffect(() => {
-    dispatch(setUserType("student"));
-
-    // Generate unique student ID for this tab
-    const tabId =
-      sessionStorage.getItem("studentId") ||
-      Date.now().toString() + Math.random().toString(36).substr(2, 9);
-    sessionStorage.setItem("studentId", tabId);
-
-    // Check if student name is already stored for this tab
-    const storedName = sessionStorage.getItem("studentName");
-    if (storedName) {
-      setNameInput(storedName);
-      joinAsStudent(storedName, tabId);
-    }
-
-    return () => {
-      socketService.offAllListeners();
-      socketService.disconnect();
-      dispatch(setConnected(false));
-    };
-  }, [dispatch, joinAsStudent]);
-
   const startTimer = React.useCallback(
     (timeLimit) => {
       const interval = setInterval(() => {
@@ -128,6 +105,29 @@ const StudentDashboard = () => {
     },
     [dispatch, navigate, startTimer]
   );
+
+  useEffect(() => {
+    dispatch(setUserType("student"));
+
+    // Generate unique student ID for this tab
+    const tabId =
+      sessionStorage.getItem("studentId") ||
+      Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    sessionStorage.setItem("studentId", tabId);
+
+    // Check if student name is already stored for this tab
+    const storedName = sessionStorage.getItem("studentName");
+    if (storedName) {
+      setNameInput(storedName);
+      joinAsStudent(storedName, tabId);
+    }
+
+    return () => {
+      socketService.offAllListeners();
+      socketService.disconnect();
+      dispatch(setConnected(false));
+    };
+  }, [dispatch, joinAsStudent]);
 
   const handleJoin = (e) => {
     e.preventDefault();
