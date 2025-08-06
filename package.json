@@ -1,0 +1,29 @@
+{
+  "name": "live-polling-system",
+  "version": "1.0.0",
+  "description": "A real-time polling system with teacher and student personas",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "start": "npm run server:start",
+    "build": "npm run client:build",
+    "client:dev": "cd client && npm start",
+    "client:build": "cd client && npm run build",
+    "client:install": "cd client && npm install",
+    "server:dev": "cd server && npm run dev",
+    "server:start": "cd server && npm start",
+    "server:install": "cd server && npm install",
+    "install:all": "npm install && npm run client:install && npm run server:install",
+    "heroku-postbuild": "npm run client:install && npm run client:build"
+  },
+  "keywords": ["polling", "real-time", "react", "express", "socket.io"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
