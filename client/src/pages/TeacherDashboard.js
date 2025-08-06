@@ -31,7 +31,7 @@ const TeacherDashboard = () => {
     dispatch(setUserType("teacher"));
 
     // Connect to socket
-    const socket = socketService.connect();
+    socketService.connect();
     socketService.joinAsTeacher();
     dispatch(setConnected(true));
 
@@ -64,9 +64,6 @@ const TeacherDashboard = () => {
       dispatch(setError(error.message));
     });
 
-    // Fetch poll history
-    fetchPollHistory();
-
     return () => {
       socketService.offAllListeners();
       socketService.disconnect();
@@ -74,7 +71,7 @@ const TeacherDashboard = () => {
     };
   }, [dispatch]);
 
-  const fetchPollHistory = async () => {
+  const fetchPollHistory = React.useCallback(async () => {
     try {
       const response = await fetch("/api/poll-history");
       const history = await response.json();
@@ -82,7 +79,11 @@ const TeacherDashboard = () => {
     } catch (error) {
       console.error("Failed to fetch poll history:", error);
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchPollHistory();
+  }, [fetchPollHistory]);
 
   const handleCreatePoll = (pollData) => {
     dispatch(setLoading(true));

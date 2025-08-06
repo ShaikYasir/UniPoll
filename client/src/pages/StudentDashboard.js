@@ -26,7 +26,7 @@ const StudentDashboard = () => {
   const { currentPoll, results, timeRemaining, error } = useSelector(
     (state) => state.poll
   );
-  const { studentName, studentId, isConnected, hasAnswered } = useSelector(
+  const { studentName, isConnected, hasAnswered } = useSelector(
     (state) => state.user
   );
 
@@ -56,11 +56,11 @@ const StudentDashboard = () => {
       socketService.disconnect();
       dispatch(setConnected(false));
     };
-  }, [dispatch]);
+  }, [dispatch, joinAsStudent]);
 
-  const joinAsStudent = (name, id) => {
+  const joinAsStudent = React.useCallback((name, id) => {
     // Connect to socket
-    const socket = socketService.connect();
+    socketService.connect();
     dispatch(setConnected(true));
 
     socketService.joinAsStudent(name, id);
@@ -110,7 +110,7 @@ const StudentDashboard = () => {
       sessionStorage.removeItem("studentId");
       navigate("/");
     });
-  };
+  }, [dispatch, navigate]);
 
   const startTimer = (timeLimit) => {
     const interval = setInterval(() => {
