@@ -58,70 +58,76 @@ const StudentDashboard = () => {
     };
   }, [dispatch, joinAsStudent]);
 
-  const joinAsStudent = React.useCallback((name, id) => {
-    // Connect to socket
-    socketService.connect();
-    dispatch(setConnected(true));
+  const startTimer = React.useCallback(
+    (timeLimit) => {
+      const interval = setInterval(() => {
+        dispatch(decrementTime());
+      }, 1000);
 
-    socketService.joinAsStudent(name, id);
-    dispatch(setStudentInfo({ name, id }));
+      // Clear interval after time limit
+      setTimeout(() => {
+        clearInterval(interval);
+      }, timeLimit * 1000);
+    },
+    [dispatch]
+  );
 
-    // Store name for this tab
-    sessionStorage.setItem("studentName", name);
-    setIsJoined(true);
+  const joinAsStudent = React.useCallback(
+    (name, id) => {
+      // Connect to socket
+      socketService.connect();
+      dispatch(setConnected(true));
 
-    // Socket event listeners
-    socketService.onNewQuestion((poll) => {
-      dispatch(setCurrentPoll(poll));
-      dispatch(setTimeRemaining(poll.timeLimit || 60));
-      dispatch(setHasAnswered(false));
-      setSelectedOption(null);
-      setShowResults(false);
+      socketService.joinAsStudent(name, id);
+      dispatch(setStudentInfo({ name, id }));
 
-      // Start countdown timer
-      startTimer(poll.timeLimit || 60);
-    });
+      // Store name for this tab
+      sessionStorage.setItem("studentName", name);
+      setIsJoined(true);
 
-    socketService.onPollResults((results) => {
-      dispatch(setResults(results));
-      dispatch(setCurrentPoll(null));
-      setShowResults(true);
-    });
+      // Socket event listeners
+      socketService.onNewQuestion((poll) => {
+        dispatch(setCurrentPoll(poll));
+        dispatch(setTimeRemaining(poll.timeLimit || 60));
+        dispatch(setHasAnswered(false));
+        setSelectedOption(null);
+        setShowResults(false);
 
-    socketService.onAnswerSubmitted((response) => {
-      if (response.success) {
-        dispatch(setHasAnswered(true));
-      }
-    });
+        // Start countdown timer
+        startTimer(poll.timeLimit || 60);
+      });
 
-    socketService.onPollError((error) => {
-      dispatch(setError(error.message));
-    });
+      socketService.onPollResults((results) => {
+        dispatch(setResults(results));
+        dispatch(setCurrentPoll(null));
+        setShowResults(true);
+      });
 
-    socketService.onNameTaken((error) => {
-      dispatch(setError(error.message));
-      setIsJoined(false);
-      sessionStorage.removeItem("studentName");
-    });
+      socketService.onAnswerSubmitted((response) => {
+        if (response.success) {
+          dispatch(setHasAnswered(true));
+        }
+      });
 
-    socketService.onRemovedByTeacher(() => {
-      alert("You have been removed from the session by the teacher.");
-      sessionStorage.removeItem("studentName");
-      sessionStorage.removeItem("studentId");
-      navigate("/");
-    });
-  }, [dispatch, navigate]);
+      socketService.onPollError((error) => {
+        dispatch(setError(error.message));
+      });
 
-  const startTimer = (timeLimit) => {
-    const interval = setInterval(() => {
-      dispatch(decrementTime());
-    }, 1000);
+      socketService.onNameTaken((error) => {
+        dispatch(setError(error.message));
+        setIsJoined(false);
+        sessionStorage.removeItem("studentName");
+      });
 
-    // Clear interval after time limit
-    setTimeout(() => {
-      clearInterval(interval);
-    }, timeLimit * 1000);
-  };
+      socketService.onRemovedByTeacher(() => {
+        alert("You have been removed from the session by the teacher.");
+        sessionStorage.removeItem("studentName");
+        sessionStorage.removeItem("studentId");
+        navigate("/");
+      });
+    },
+    [dispatch, navigate, startTimer]
+  );
 
   const handleJoin = (e) => {
     e.preventDefault();

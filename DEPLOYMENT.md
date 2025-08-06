@@ -5,13 +5,15 @@
 Your Live Polling System is ready for deployment! Here's how to deploy it to Vercel using Git integration for continuous deployment:
 
 ### Prerequisites
-- GitHub account  
+
+- GitHub account
 - Vercel account
 - Git repository (already initialized ✅)
 
 ### Step 1: Push to GitHub
 
 1. **Create a new repository on GitHub** (go to github.com/new)
+
    - Repository name: `live-polling-system`
    - Set as Public or Private
    - Don't initialize with README (we already have files)
@@ -27,15 +29,18 @@ Your Live Polling System is ready for deployment! Here's how to deploy it to Ver
 ### Step 2: Deploy with Vercel
 
 1. **Go to Vercel Dashboard**
+
    - Visit [vercel.com](https://vercel.com)
    - Sign in with GitHub
 
 2. **Import Your Repository**
+
    - Click "New Project"
    - Import your `live-polling-system` repository
    - Vercel will auto-detect it as a React app
 
 3. **Configure Build Settings**
+
    - **Framework Preset**: Other
    - **Build Command**: `cd client && npm install && npm run build`
    - **Output Directory**: `client/build`
@@ -60,21 +65,26 @@ git push origin main
 ## 📱 Alternative: CLI Deployment
 
 ### Prerequisites
+
 - Vercel CLI installed: `npm i -g vercel`
 - Vercel account
 
 ### Deployment Steps
 
 1. **Login to Vercel**
+
    ```bash
    vercel login
    ```
 
 2. **Deploy**
+
    ```bash
    ./deploy.sh
    ```
+
    Or manually:
+
    ```bash
    cd client && npm run build && cd .. && vercel --prod
    ```
